@@ -14,6 +14,7 @@ function servo_controller.init(pin, freq, left_us, right_us, center_us)
     self.right_cycles = 50 -- (right_us/self.pulse_width)
 
     gpio.mode(self.pin, gpio.OUTPUT)
+	gpio.write(self.pin, gpio.LOW)
 
     -- XXX/get rid of the unused functions
     function self.start(initial_position, duty_cycles, delay_ms)

@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html>
 <head>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' href='http://bit.ly/1QCHZPl'><!--Bootstrap-->
@@ -13,16 +15,14 @@
     });
 </script>
 </head>
-<html>
 <body>
 <div class='container'>
 <h1>KittyTron 3000</h1>
-Live KittenCam:
-<center>
-<p><iframe src="http://kittytron.ddns.net:8080" width="640" height="480"></iframe>
-<p>
 <p><button onclick="$.get('/', {auto:'sensor'})" class='btn btn-block btn-lg btn-primary'>On</button>
 <p><button onclick="$.get('/', {auto:'raise'})" class='btn btn-block btn-lg btn-primary'>Off</button>
+<p><button onclick="$.get('/', {auto:'stop'})" class='btn btn-block btn-lg btn-primary'>Stop</button>
+<p><button onclick="$.get('/', {auto:'frenzy'})" class='btn btn-block btn-lg btn-primary'>Frenzy</button>
+<p><button onclick="$.get('/', {auto:'tease'})" class='btn btn-block btn-lg btn-primary'>Tease</button>
 <p>Position: &nbsp; &nbsp; <input id='position' data-slider-id='sld_position' data-slider-min='0' data-slider-max='100' data-slider-step='10' data-slider-value='0' data-slider-tooltip="hide" style='width:90%;height:30px;'>
 </center>
 </div>

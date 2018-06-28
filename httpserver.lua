@@ -22,51 +22,72 @@ srv:listen(80, function(conn)
         -- XXX/clean up the old routines
         if (_GET.auto == "frenzy") then
             -- Change to only do this for 30 seconds
-            start_servo()
-            start_wiggle_servo(position_change_ms_fast)
+            servo:start_wiggle(position_change_ms_fast)
         elseif (_GET.auto == "tease") then
             -- Change to only do this for 30 seconds
-            start_servo()
-            start_wiggle_servo(position_change_ms_slow)
+            servo:start_wiggle(position_change_ms_slow)
+		elseif (_GET.auto == "stop") then
+			servo:stop_wiggle()
         elseif (_GET.auto == "fulltravel") then
-            stop_wiggle_servo()
-            start_servo(1)
-            set_servo_position(100)
-            tmr.delay(1000*1000)
-            stop_servo()
+            servo:stop_wiggle()
+            servo:set_position(100)
         elseif (_GET.auto == "lower") then
-            stop_wiggle_servo()
-            start_servo(100)
-            stop_servo()
+            servo:stop_wiggle()
+			servo:set_position(1)
         elseif (_GET.setposition ~= nil) then
-            stop_wiggle_servo()
-            start_servo(_GET.setposition)
-            stop_servo()
-        elseif (_GET.auto == "raise") then
-            sensor.stop()
-        elseif (_GET.auto == "sensor") then
-            sensor.start()
-        end
+            servo:stop_wiggle()
+			servo:set_position(_GET.setposition)
+		else
+			-- send the page
+			if file.open("webpage.html", "r") then
+				response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
 
-        if file.open("webpage.html", "r") then
-            reponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
+				-- read 1K chunks to get around the socket buffer size limits
+				while true do
+					block = file.read(1024)
+					if not block then break end
 
-            -- read 1K chunks to get around the socket buffer size limits
-            while true do
-                block = file.read(1024)
-                if not block then break end
+					response = response..block
+				end
 
-                response = response..block
-            end
+				file.close()
+			end
+			client:send(response, function ()
+				client:close()
+				collectgarbage()
+			end)
+			return
+		end
 
-            file.close()
-        end
+		-- just respond with a simple JSON indicating everything is 'OK'
+		response = 'HTTP/1.1 200 OK\r\nContent-Type: application/javascript\r\n\r\n{"status":"OK"}\r\n'
+		client:send(response, function ()
+			client:close()
+			collectgarbage()
+		end)
+		return
 
-        print("Response length: "..string.len(response))
-        -- XXX/fix the 1460 byte response size limit
-        client:send(response)
-        client:close()
+--         if file.open("webpage.html", "r") then
+--             reponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
 
-        collectgarbage()
+--             -- read 1K chunks to get around the socket buffer size limits
+--             while true do
+--                 block = file.read(1024)
+--                 if not block then break end
+
+--                 response = response..block
+--             end
+
+--             file.close()
+--         end
+
+--         print("Response length: "..string.len(response))
+--         -- XXX/fix the 1460 byte response size limit
+--         client:send(response, function (res)
+-- 			client:close()
+-- 		end)
+--         -- client:close()
+
+--         collectgarbage()
     end)
 end)

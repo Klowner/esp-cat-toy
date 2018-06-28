@@ -3,7 +3,7 @@ function connect_wifi (ap, password)
 
     wifi.sleeptype(wifi.MODEM_SLEEP)
     wifi.setmode(wifi.STATION)
-    wifi.sta.config(ap, password)
+    wifi.sta.config({ssid=ap, pwd=password})
 
     local start_time = tmr.now()
     tmr.alarm(0, 100, 1, function()
